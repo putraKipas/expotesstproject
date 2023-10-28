@@ -23,9 +23,8 @@ Notifications.setNotificationHandler({
 });
 
   async function sendPushNotification(expoPushToken) {
-    // console.log('cek', expoPushToken);
     const message = {
-      to: expoPushToken.data,
+      to: expoPushToken,
       sound: 'default',
       title: 'LOGIN TEST PROJECT',
       body: 'Hey Loggin Succesfully',
@@ -78,7 +77,7 @@ Notifications.setNotificationHandler({
   
   export default function TestIn() {
     const router = useRouter();
-    const [name, setName] = useState('');
+    const [name, setName] = useState(null);
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
@@ -132,7 +131,7 @@ Notifications.setNotificationHandler({
         />
         <View style={{height: 200}}/>
         <TouchableOpacity
-          style={Styles.buttonActiopn}
+          style={Styles.buttonAction}
           onPress={() => storeData()}
         >
           <Text style={Textstyle.textBold}>
