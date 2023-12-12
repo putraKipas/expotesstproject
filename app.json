@@ -26,6 +26,12 @@
       },
       "package": "com.aryopp.testproject"
     },
+    "updates": {
+      "url": "https://u.expo.dev/9cffffff-1536-4863-842b-8fe768c5c204",
+      "enabled": true,
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_LOAD"
+    },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
@@ -38,6 +44,9 @@
     "owner": "aryopp",
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    }
   }
 }

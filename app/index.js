@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     Alert,
   } from "react-native";
-import * as Device from 'expo-device';
+import * as Updates from 'expo-updates';
 import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
@@ -54,31 +54,15 @@ Notifications.setNotificationHandler({
       });
     }
 
-    // if (Device.isDevice) {
-    //   const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    //   let finalStatus = existingStatus;
-    //   if (existingStatus !== 'granted') {
-    //     const { status } = await Notifications.requestPermissionsAsync();
-    //     finalStatus = status;
-    //   }
-    //   if (finalStatus !== 'granted') {
-    //     alert('Failed to get push token for push notification!');
-    //     return;
-    //   }
-    //   token = await Notifications.getExpoPushTokenAsync({
-    //     projectId: Constants.expoConfig.extra.eas.projectId,
-    //   });
-    // } else {
-    //   alert('Must use physical device for Push Notifications');
-    // }
     token = await Notifications.getExpoPushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId,
     });
 
     return token;
   }
-  
+
   export default function TestIn() {
+    
     const router = useRouter();
     const [name, setName] = useState(null);
     const [notification, setNotification] = useState(false);
@@ -87,17 +71,14 @@ Notifications.setNotificationHandler({
 
     const storeData = () => {
       if(name){
-        console.log('Mas');
         registerForPushNotificationsAsync().then((token) => {
           sendPushNotification(token.data);
-          console.log('myToken', token.data)
           AsyncStorage.setItem('myToken', token.data)
             router.push('auth/sign-in')
           });
       } else {
         Alert.alert('ERROR', "Hello, Please Input Your Name !")
       }
-      
     };
 
     useEffect(() => {
@@ -122,6 +103,32 @@ Notifications.setNotificationHandler({
       };
     }, []);
 
+    async function onFetchUpdateAsync() {
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        }
+      } catch (error) {
+        // You can also add an alert() here if needed for your purposes
+        console.log(`Error fetching latest Expo update: ${error}`);
+      }
+    }  
+
+    const buttonComponent = (tittle, onPress) => {
+      return(
+      <TouchableOpacity
+        style={Styles.buttonAction}
+        onPress={onPress}
+      >
+        <Text style={Textstyle.textBold}>
+          {tittle}
+        </Text>
+      </TouchableOpacity>
+      )
+    }
+
     return (
       <View style={Styles.container}>
         <View>
@@ -135,14 +142,9 @@ Notifications.setNotificationHandler({
           onChangeText={setName}
         />
         <View style={{height: 200}}/>
-        <TouchableOpacity
-          style={Styles.buttonAction}
-          onPress={() => storeData()}
-        >
-          <Text style={Textstyle.textBold}>
-            LOGIN
-          </Text>
-        </TouchableOpacity>
+        {buttonComponent("LOGIN", () => storeData())}
+        <View style={{height: 20}}/>
+        {buttonComponent("Check Manually", () => onFetchUpdateAsync())}
       </View>
     );
   }
